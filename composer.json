@@ -1,0 +1,6 @@
+{
+    "name": "thomas.kaestner/pdfmerging",
+    "require": {
+        "mpdf/mpdf": "^8.0"
+    }
+}
