@@ -1,21 +1,27 @@
 <?php
 // Require composer autoload
+use Mpdf\Output\Destination;
+
 require_once __DIR__ . '/vendor/autoload.php';
 
-#unlink('test.txt');
 
-$mpdf = new \Mpdf\Mpdf();
+ function mergePdfs($basePdfPath, array $pdfPaths)
+{
+    $mpdf = new \Mpdf\Mpdf();
+    $pagecount = $mpdf->SetSourceFile($basePdfPath);
+    $tplId = $mpdf->ImportPage($pagecount);
+    $mpdf->UseTemplate($tplId);
 
-$pagecount = $mpdf->SetSourceFile('test.pdf');
-$tplId = $mpdf->ImportPage($pagecount);
-$mpdf->UseTemplate($tplId);
+    foreach ($pdfPaths as $pdfPath) {
+        $mpdf->AddPage();
 
-$mpdf->AddPage();
+        $tempMpdf = new \Mpdf\Mpdf();
+        $tempMpdf->SetSourceFile($pdfPath);
+        $tplId = $tempMpdf->ImportPage($pagecount);
+        $mpdf->UseTemplate($tplId);
+    }
 
-$mpdf2 = new \Mpdf\Mpdf();
+    $mpdf->Output();
+}
 
-$mpdf2->SetSourceFile('test.pdf');
-$tplId = $mpdf2->ImportPage($pagecount);
-$mpdf->UseTemplate($tplId);
-
-$mpdf->Output();
+mergePdfs('test.pdf', ['test.pdf']);
